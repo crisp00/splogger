@@ -1,0 +1,7 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+input[type=text]{
+    border: 0;
+}
