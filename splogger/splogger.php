@@ -35,6 +35,7 @@ class Splogger{
             $_SESSION[$this->instance_id . "logged_in"] = 1;
             $_SESSION[$this->instance_id . "user"] = $requested_user;
         }
+	return $requested_user; 
     }
 
     public function logout(){
@@ -54,22 +55,28 @@ class Splogger{
     }
 
     public function isLoggedIn(){
-        return $_SESSION[$this->instance_id . "logged_in"] == 1;
+	$loggedin = isset($_SESSION[$this->instance_id . "logged_in"]) && ($_SESSION[$this->instance_id . "logged_in"] == 1);
+        if(!$loggedin)
+	    return false;
+	$user = $_SESSION[$this->instance_id . "user"];
+	return $user;
     }
 
     public function createGroup($display_name){
-        $this->db->query("INSERT INTO ". $this->config->db_prefix ." (display_name) VALUES ('".$display_name."')");
+        $this->db->query("INSERT INTO ". $this->config->db_prefix ."_groups (display_name) VALUES ('".$display_name."')");
         if($this->db->error){
             throw new ErrorException("Splogger: Error Creating Group " . $this->db->error);
         }
     }
 
-    public function getUser($user){
+	
+
+    public function getUser($username){
         $res = $this->db->query("
         SELECT * FROM ".$this->config->db_prefix."_users
         INNER JOIN ". $this->config->db_prefix ."_groups
         ON ". $this->config->db_prefix ."_groups.ID_group = ". $this->config->db_prefix ."_users.ID_group 
-        WHERE username = \"" . $user . "\";");
+        WHERE username = \"" . $username . "\";");
         if(!$res)
             throw new ErrorException("Splogger Database Error: " . $this->db->error);
         return SploggerUser::fromDBRow($res->fetch_assoc());

@@ -10,6 +10,17 @@ $config->db_prefix = "xx";
 //$splogger = new Splogger($config, "pi_");
 $splogger = new Splogger($config, "pi_");
 $page = "login";
+if(isset($_POST["login"])){
+    $user = $_POST["user"];
+    $pass = $_POST["pass"];
+    $splogger->login($user, $pass);
+}else if(isset($_GET["logout"])){
+    $splogger->logout();
+}
+if($user = $splogger->isLoggedIn()){
+    $page = "user";
+    $user = $user->user;
+}
 ?>
 
 <html>
@@ -23,6 +34,9 @@ $page = "login";
             switch($page){
                 case "login":
                     require("./templates/login.html");
+                break;
+                case "user":
+                    require("./templates/user.php");
                 break;
             }
         ?>
